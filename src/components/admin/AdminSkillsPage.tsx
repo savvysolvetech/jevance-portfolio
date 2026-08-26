@@ -4,29 +4,14 @@ import { Skill, SkillProficiency } from '../../types';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { Plus, Edit2, Trash2, Code2, X, Tag, Settings2, ChevronDown, ChevronUp } from 'lucide-react';
 
-const CATEGORIES_STORAGE_KEY = 'jevance_skill_categories';
-
 const DEFAULT_CATEGORIES = [
-  'Data Analysis',
-  'Database & SQL',
-  'Business Intelligence',
-  'Spreadsheets & Reporting',
-  'Tools & Workflows',
+  'Environmental, Health & Safety (EHS)',
+  'Waste & Recycling Operations',
+  'Environmental Policy & Compliance',
+  'Data & Database Management',
+  'Tools & Operations',
   'Other'
 ];
-
-function loadCategories(): string[] {
-  try {
-    const saved = localStorage.getItem(CATEGORIES_STORAGE_KEY);
-    return saved ? JSON.parse(saved) : DEFAULT_CATEGORIES;
-  } catch {
-    return DEFAULT_CATEGORIES;
-  }
-}
-
-function saveCategories(cats: string[]) {
-  localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(cats));
-}
 
 const proficiencies: SkillProficiency[] = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
 
@@ -38,7 +23,7 @@ export const AdminSkillsPage: React.FC = () => {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   // Dynamic categories state
-  const [categories, setCategories] = useState<string[]>(loadCategories);
+  const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES);
   const [showCatManager, setShowCatManager] = useState(false);
   const [newCatInput, setNewCatInput] = useState('');
   const [catToDelete, setCatToDelete] = useState<string | null>(null);
@@ -46,16 +31,12 @@ export const AdminSkillsPage: React.FC = () => {
   const addCategory = () => {
     const trimmed = newCatInput.trim();
     if (!trimmed || categories.includes(trimmed)) return;
-    const updated = [...categories, trimmed];
-    setCategories(updated);
-    saveCategories(updated);
+    setCategories(prev => [...prev, trimmed]);
     setNewCatInput('');
   };
 
   const removeCategory = (cat: string) => {
-    const updated = categories.filter(c => c !== cat);
-    setCategories(updated);
-    saveCategories(updated);
+    setCategories(prev => prev.filter(c => c !== cat));
     setCatToDelete(null);
   };
 

@@ -104,68 +104,17 @@ interface CVContextType {
 
 const CVContext = createContext<CVContextType | undefined>(undefined);
 
-const STORAGE_KEYS = {
-  PROFILE: 'jevance_cv_profile',
-  EXPERIENCE: 'jevance_cv_experience',
-  EDUCATION: 'jevance_cv_education',
-  SKILLS: 'jevance_cv_skills',
-  PROJECTS: 'jevance_cv_projects',
-  CERTIFICATIONS: 'jevance_cv_certifications',
-  ACHIEVEMENTS: 'jevance_cv_achievements',
-  REFEREES: 'jevance_cv_referees',
-  DOCUMENTS: 'jevance_cv_documents',
-  LAST_UPDATED: 'jevance_cv_last_updated'
-};
-
 export const CVProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [profile, setProfile] = useState<Profile>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.PROFILE);
-    return saved ? JSON.parse(saved) : initialProfile;
-  });
-
-  const [experience, setExperience] = useState<Experience[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.EXPERIENCE);
-    return saved ? JSON.parse(saved) : initialExperience;
-  });
-
-  const [education, setEducation] = useState<Education[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.EDUCATION);
-    return saved ? JSON.parse(saved) : initialEducation;
-  });
-
-  const [skills, setSkills] = useState<Skill[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.SKILLS);
-    return saved ? JSON.parse(saved) : initialSkills;
-  });
-
-  const [projects, setProjects] = useState<Project[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.PROJECTS);
-    return saved ? JSON.parse(saved) : initialProjects;
-  });
-
-  const [certifications, setCertifications] = useState<Certification[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.CERTIFICATIONS);
-    return saved ? JSON.parse(saved) : initialCertifications;
-  });
-
-  const [achievements, setAchievements] = useState<Achievement[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.ACHIEVEMENTS);
-    return saved ? JSON.parse(saved) : initialAchievements;
-  });
-
-  const [referees, setReferees] = useState<Referee[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.REFEREES);
-    return saved ? JSON.parse(saved) : initialReferees;
-  });
-
-  const [documents, setDocuments] = useState<DocumentRecord[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.DOCUMENTS);
-    return saved ? JSON.parse(saved) : [initialDocument];
-  });
-
-  const [lastUpdated, setLastUpdated] = useState<string>(() => {
-    return localStorage.getItem(STORAGE_KEYS.LAST_UPDATED) || new Date().toISOString();
-  });
+  const [profile, setProfile] = useState<Profile>(initialProfile);
+  const [experience, setExperience] = useState<Experience[]>(initialExperience);
+  const [education, setEducation] = useState<Education[]>(initialEducation);
+  const [skills, setSkills] = useState<Skill[]>(initialSkills);
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [certifications, setCertifications] = useState<Certification[]>(initialCertifications);
+  const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements);
+  const [referees, setReferees] = useState<Referee[]>(initialReferees);
+  const [documents, setDocuments] = useState<DocumentRecord[]>([initialDocument]);
+  const [lastUpdated, setLastUpdated] = useState<string>(() => new Date().toISOString());
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -186,44 +135,7 @@ export const CVProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const markUpdated = () => {
     const now = new Date().toISOString();
     setLastUpdated(now);
-    localStorage.setItem(STORAGE_KEYS.LAST_UPDATED, now);
   };
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(profile));
-  }, [profile]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.EXPERIENCE, JSON.stringify(experience));
-  }, [experience]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.EDUCATION, JSON.stringify(education));
-  }, [education]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.SKILLS, JSON.stringify(skills));
-  }, [skills]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
-  }, [projects]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.CERTIFICATIONS, JSON.stringify(certifications));
-  }, [certifications]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.ACHIEVEMENTS, JSON.stringify(achievements));
-  }, [achievements]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.REFEREES, JSON.stringify(referees));
-  }, [referees]);
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.DOCUMENTS, JSON.stringify(documents));
-  }, [documents]);
 
   useEffect(() => {
     if (!isFirebaseConfigured || !db) return;

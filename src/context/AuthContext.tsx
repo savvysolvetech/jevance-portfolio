@@ -16,8 +16,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const LOCAL_AUTH_KEY = 'jevance_cv_admin_auth';
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,36 +23,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let isMounted = true;
 
-    function checkLocalSession() {
-      try {
-        const stored = localStorage.getItem(LOCAL_AUTH_KEY);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (parsed && parsed.email) {
-            setUser(parsed);
-          }
-        }
-      } catch (err) {
-        console.error('Error reading local auth session', err);
-      }
-    }
-
     if (isFirebaseConfigured && auth) {
       const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
         if (firebaseUser) {
           setUser({
             id: firebaseUser.uid,
-            email: firebaseUser.email || 'admin@jevanceochieng.dev',
+            email: firebaseUser.email || '',
             name: firebaseUser.displayName || 'Jevance Ochieng',
             role: 'admin'
           });
         } else {
-          const stored = localStorage.getItem(LOCAL_AUTH_KEY);
-          if (!stored) {
-            setUser(null);
-          } else {
-            checkLocalSession();
-          }
+          setUser(null);
         }
         if (isMounted) setIsLoading(false);
       });
@@ -64,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         unsubscribe();
       };
     } else {
-      checkLocalSession();
+      setUser(null);
       if (isMounted) setIsLoading(false);
       return () => {
         isMounted = false;
@@ -76,46 +55,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     const cleanEmail = email.trim().toLowerCase();
 
-    // 1. If Firebase is connected, attempt Firebase Auth
-    if (isFirebaseConfigured && auth) {
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
-        if (userCredential.user) {
-          const loggedUser: AdminUser = {
-            id: userCredential.user.uid,
-            email: userCredential.user.email || cleanEmail,
-            name: userCredential.user.displayName || 'Jevance Ochieng',
-            role: 'admin'
-          };
-          setUser(loggedUser);
-          localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(loggedUser));
-          setIsLoading(false);
-          return { success: true };
-        }
-      } catch (err: any) {
-        console.warn('Firebase auth attempt error, fallback available:', err);
-        // We do not return false here, we fall through to the local fallback for demo purposes
-      }
-    }
-
-    // 2. Local fallback verification (Secure Admin CMS session)
-    if (password.length >= 6) {
-      const loggedUser: AdminUser = {
-        id: 'admin-local-1',
-        email: cleanEmail,
-        name: cleanEmail.includes('jevance') ? 'Jevance Ochieng' : 'Admin User',
-        role: 'admin'
-      };
-      setUser(loggedUser);
-      localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(loggedUser));
-      setIsLoading(false);
-      return { success: true };
-    } else {
+    if (!isFirebaseConfigured || !auth) {
       setIsLoading(false);
       return {
         success: false,
-        error: 'Password must be at least 6 characters long.'
+        error: 'Firebase is not configured. Please add VITE_FIREBASE_* environment variables.'
       };
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
+      if (userCredential.user) {
+        setUser({
+          id: userCredential.user.uid,
+          email: userCredential.user.email || cleanEmail,
+          name: userCredential.user.displayName || 'Jevance Ochieng',
+          role: 'admin'
+        });
+        setIsLoading(false);
+        return { success: true };
+      }
+      setIsLoading(false);
+      return { success: false, error: 'Authentication failed.' };
+    } catch (err: any) {
+      console.error('Firebase Auth sign-in error:', err);
+      setIsLoading(false);
+      let msg = 'Authentication failed. Check your email and password.';
+      if (err?.code === 'auth/invalid-credential' || err?.code === 'auth/wrong-password' || err?.code === 'auth/user-not-found') {
+        msg = 'Invalid email or password.';
+      } else if (err?.code === 'auth/too-many-requests') {
+        msg = 'Access temporarily disabled due to many failed login attempts. Try again later or reset password.';
+      } else if (err?.message) {
+        msg = err.message;
+      }
+      return { success: false, error: msg };
     }
   };
 
@@ -128,16 +101,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.warn('Error signing out from Firebase:', e);
       }
     }
-    localStorage.removeItem(LOCAL_AUTH_KEY);
     setUser(null);
     setIsLoading(false);
   };
 
   const updateAdminProfile = (name: string, email: string) => {
     if (!user) return;
-    const updated = { ...user, name, email };
-    setUser(updated);
-    localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(updated));
+    setUser({ ...user, name, email });
   };
 
   return (
