@@ -1,16 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCV } from '../../context/CVContext';
-import { 
-  Download, 
-  ArrowRight, 
-  Linkedin, 
-  Github, 
-  Mail, 
-  MapPin, 
-  Database, 
-  BarChart3, 
-  FileSpreadsheet, 
+import {
+  Download,
+  ArrowRight,
+  Linkedin,
+  Github,
+  Mail,
+  MapPin,
+  Database,
+  BarChart3,
+  FileSpreadsheet,
   CheckCircle,
   Sparkles
 } from 'lucide-react';
@@ -26,7 +26,7 @@ export const HeroSection: React.FC = () => {
   };
 
   return (
-    <section 
+    <section
       id="hero"
       className="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden"
     >
@@ -36,21 +36,21 @@ export const HeroSection: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          
+
           {/* Main Hero Column */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
-            
+
             {/* Status / Category Pill */}
-            <div 
+            <div
               id="hero-status-badge"
               className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 text-blue-700 dark:text-blue-300 text-xs font-semibold uppercase tracking-wider mb-6"
             >
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-              <span>{profile.status_badge || 'DATA ANALYST & BI SPECIALIST'}</span>
+              <span>{profile.status_badge || 'ENVIRONMENTAL PLANNING & MANAGEMENT | EHS/HSSE'}</span>
             </div>
 
             {/* Name Headline */}
-            <h1 
+            <h1
               id="hero-name"
               className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1] mb-4"
             >
@@ -58,7 +58,7 @@ export const HeroSection: React.FC = () => {
             </h1>
 
             {/* Professional Title Subhead */}
-            <p 
+            <p
               id="hero-title"
               className="text-lg sm:text-xl font-semibold text-blue-600 dark:text-blue-400 mb-6"
             >
@@ -66,7 +66,7 @@ export const HeroSection: React.FC = () => {
             </p>
 
             {/* Introduction Bio */}
-            <p 
+            <p
               id="hero-tagline"
               className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed mb-8 font-normal"
             >
@@ -77,21 +77,21 @@ export const HeroSection: React.FC = () => {
             <div className="grid grid-cols-3 gap-3 w-full max-w-lg mb-8">
               <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
                 <span className="text-2xl font-bold text-slate-900 dark:text-white font-mono">
-                  {profile.years_of_experience}+ Years
+                  {profile.years_of_experience || 7}+ Years
                 </span>
                 <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Experience</span>
               </div>
               <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
                 <span className="text-2xl font-bold text-blue-600 dark:text-blue-400 font-mono">
-                  99.8%
+                  EHS & MRF
                 </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Data Accuracy</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Operations</span>
               </div>
               <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
                 <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 font-mono">
-                  SQL & BI
+                  100%
                 </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Core Focus</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Compliance</span>
               </div>
             </div>
 
@@ -105,7 +105,7 @@ export const HeroSection: React.FC = () => {
                 <Download className="w-4 h-4" />
                 <span>Download CV</span>
               </Link>
-              
+
               <button
                 id="hero-view-work-btn"
                 onClick={() => handleScrollToSection('projects')}
@@ -125,8 +125,8 @@ export const HeroSection: React.FC = () => {
                 </div>
               )}
               {profile.email && (
-                <a 
-                  href={`mailto:${profile.email}`} 
+                <a
+                  href={`mailto:${profile.email}`}
                   className="flex items-center gap-1.5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   <Mail className="w-3.5 h-3.5 text-blue-500" />
@@ -134,10 +134,10 @@ export const HeroSection: React.FC = () => {
                 </a>
               )}
               {profile.linkedin && (
-                <a 
-                  href={profile.linkedin} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <a
+                  href={profile.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-1.5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   <Linkedin className="w-3.5 h-3.5 text-blue-500" />
@@ -145,10 +145,10 @@ export const HeroSection: React.FC = () => {
                 </a>
               )}
               {profile.github && (
-                <a 
-                  href={profile.github} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
+                <a
+                  href={profile.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-1.5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   <Github className="w-3.5 h-3.5 text-blue-500" />
@@ -162,17 +162,17 @@ export const HeroSection: React.FC = () => {
           {/* Right Visual / Profile Card */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-sm">
-              
+
               {/* Decorative backplate */}
               <div className="absolute -inset-1.5 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-3xl blur-md opacity-30 dark:opacity-40" />
 
               {/* Main Card */}
               <div className="relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl">
-                
+
                 {/* Photo with status indicator */}
                 <div className="relative mx-auto w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden border-2 border-slate-100 dark:border-slate-800 shadow-inner group">
                   <img
-                    src={profile.profile_image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600'}
+                    src={profile.profile_image || 'https://i.ibb.co/MkBQjqZT/Whats-App-Image-2026-08-26-at-12-41-07.jpg'}
                     alt={profile.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
@@ -185,42 +185,29 @@ export const HeroSection: React.FC = () => {
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {profile.name}
                   </h3>
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">
-                    Data Analytics & BI Professional
+                  <p className="text-xs font-medium text-blue-600 dark:text-blue-400 mt-1 line-clamp-2">
+                    {profile.professional_title || 'Environmental Planning & Management | EHS/HSSE'}
                   </p>
                 </div>
 
-                {/* Tech Highlights Badge Stack */}
-                <div className="mt-5 space-y-2.5">
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800/80">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                        <Database className="w-4 h-4" />
+                {/* Dynamic Areas of Expertise Badges */}
+                <div className="mt-5 space-y-2">
+                  {(profile.areas_of_expertise && profile.areas_of_expertise.length > 0
+                    ? profile.areas_of_expertise.slice(0, 3)
+                    : ['EHS / HSSE Management', 'Waste & Recycling Operations', 'Environmental Policy & Compliance']
+                  ).map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800/80">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                          <CheckCircle className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{item}</span>
                       </div>
-                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">SQL & PostgreSQL</span>
+                      <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+                        Expert
+                      </span>
                     </div>
-                    <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">Expert</span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800/80">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                        <BarChart3 className="w-4 h-4" />
-                      </div>
-                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Power BI & DAX</span>
-                    </div>
-                    <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">Certified</span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800/80">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                        <FileSpreadsheet className="w-4 h-4" />
-                      </div>
-                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Excel & Google Sheets</span>
-                    </div>
-                    <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">Advanced</span>
-                  </div>
+                  ))}
                 </div>
 
                 {/* Verified badge */}

@@ -85,15 +85,20 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenCVModal }) => {
           id="nav-brand-logo"
           className="flex items-center gap-3 group focus:outline-none"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white font-bold text-base flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-            {profile.name.split(' ').map(n => n[0]).join('').substring(0, 2) || 'DK'}
+          <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md shadow-blue-500/10 group-hover:scale-105 transition-transform flex-shrink-0 bg-slate-100 dark:bg-slate-900">
+            <img
+              src={profile.profile_image || 'https://i.ibb.co/MkBQjqZT/Whats-App-Image-2026-08-26-at-12-41-07.jpg'}
+              alt={profile.name}
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
           </div>
           <div className="flex flex-col">
             <span className="font-bold text-slate-900 dark:text-white text-base sm:text-lg tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
               {profile.name}
             </span>
-            <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 tracking-wider uppercase">
-              Data Analyst
+            <span className="text-[11px] font-medium text-blue-600 dark:text-blue-400 tracking-wider uppercase">
+              EHS & Environmental Operations
             </span>
           </div>
         </Link>
