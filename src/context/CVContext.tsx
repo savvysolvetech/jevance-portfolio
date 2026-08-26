@@ -95,6 +95,7 @@ interface CVContextType {
   // Backup & Reset
   resetToDefaults: () => void;
   resetToDefaultData: () => void;
+  seedFirestoreDatabase: () => Promise<boolean>;
   exportDatabaseJSON: () => string;
   exportDataAsJSON: () => string;
   importDatabaseJSON: (jsonStr: string) => boolean | Promise<{ success: boolean; error?: string }>;
@@ -231,39 +232,80 @@ export const CVProvider: React.FC<{ children: React.ReactNode }> = ({ children }
       setIsLoading(true);
       try {
         const fetchCollection = async (colName: string, orderField = 'order_index', desc = false) => {
-          const q = query(collection(db!, colName), orderBy(orderField, desc ? 'desc' : 'asc'));
-          const snapshot = await getDocs(q);
-          return snapshot.docs.map(doc => doc.data());
+          try {
+            const q = query(collection(db!, colName), orderBy(orderField, desc ? 'desc' : 'asc'));
+            const snapshot = await getDocs(q);
+            return snapshot.docs.map(doc => doc.data());
+          } catch (e) {
+            const snapshot = await getDocs(collection(db!, colName));
+            return snapshot.docs.map(doc => doc.data());
+          }
         };
 
-        const profSnapshot = await getDocs(collection(db!, 'profiles'));
-        if (!profSnapshot.empty) {
-          setProfile(profSnapshot.docs[0].data() as Profile);
+        try {
+          const profSnapshot = await getDocs(collection(db!, 'profiles'));
+          if (!profSnapshot.empty) {
+            setProfile(profSnapshot.docs[0].data() as Profile);
+          }
+        } catch (e) {
+          console.warn('Firestore profiles fetch warning:', e);
         }
 
-        const expData = await fetchCollection('experience');
-        if (expData.length > 0) setExperience(expData as Experience[]);
+        try {
+          const expData = await fetchCollection('experience');
+          if (expData.length > 0) setExperience(expData as Experience[]);
+        } catch (e) {
+          console.warn('Firestore experience fetch warning:', e);
+        }
 
-        const eduData = await fetchCollection('education');
-        if (eduData.length > 0) setEducation(eduData as Education[]);
+        try {
+          const eduData = await fetchCollection('education');
+          if (eduData.length > 0) setEducation(eduData as Education[]);
+        } catch (e) {
+          console.warn('Firestore education fetch warning:', e);
+        }
 
-        const skillData = await fetchCollection('skills');
-        if (skillData.length > 0) setSkills(skillData as Skill[]);
+        try {
+          const skillData = await fetchCollection('skills');
+          if (skillData.length > 0) setSkills(skillData as Skill[]);
+        } catch (e) {
+          console.warn('Firestore skills fetch warning:', e);
+        }
 
-        const projData = await fetchCollection('projects');
-        if (projData.length > 0) setProjects(projData as Project[]);
+        try {
+          const projData = await fetchCollection('projects');
+          if (projData.length > 0) setProjects(projData as Project[]);
+        } catch (e) {
+          console.warn('Firestore projects fetch warning:', e);
+        }
 
-        const certData = await fetchCollection('certifications');
-        if (certData.length > 0) setCertifications(certData as Certification[]);
+        try {
+          const certData = await fetchCollection('certifications');
+          if (certData.length > 0) setCertifications(certData as Certification[]);
+        } catch (e) {
+          console.warn('Firestore certifications fetch warning:', e);
+        }
 
-        const achData = await fetchCollection('achievements');
-        if (achData.length > 0) setAchievements(achData as Achievement[]);
+        try {
+          const achData = await fetchCollection('achievements');
+          if (achData.length > 0) setAchievements(achData as Achievement[]);
+        } catch (e) {
+          console.warn('Firestore achievements fetch warning:', e);
+        }
 
-        const refData = await fetchCollection('referees');
-        if (refData.length > 0) setReferees(refData as Referee[]);
+        try {
+          const refData = await fetchCollection('referees');
+          if (refData.length > 0) setReferees(refData as Referee[]);
+        } catch (e) {
+          console.warn('Firestore referees fetch warning:', e);
+        }
 
-        const docData = await fetchCollection('documents', 'uploaded_at', true);
-        if (docData.length > 0) setDocuments(docData as DocumentRecord[]);
+        try {
+          const docData = await fetchCollection('documents', 'uploaded_at', true);
+          if (docData.length > 0) setDocuments(docData as DocumentRecord[]);
+        } catch (e) {
+          console.warn('Firestore documents fetch warning:', e);
+        }
 
       } catch (err) {
         console.error('Error fetching Firestore records, keeping local cache', err);
@@ -789,6 +831,45 @@ export const CVProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     showToast('Database reset to Jevance Ochieng defaults', 'info');
   };
 
+  const seedFirestoreDatabase = async (): Promise<boolean> => {
+    if (!isFirebaseConfigured || !db) {
+      showToast('Firebase is not configured yet. Check environment variables.', 'error');
+      return false;
+    }
+    setIsSaving(true);
+    try {
+      await setDoc(doc(db, 'profiles', initialProfile.id), initialProfile);
+      for (const item of initialExperience) await setDoc(doc(db, 'experience', item.id), item);
+      for (const item of initialEducation) await setDoc(doc(db, 'education', item.id), item);
+      for (const item of initialSkills) await setDoc(doc(db, 'skills', item.id), item);
+      for (const item of initialProjects) await setDoc(doc(db, 'projects', item.id), item);
+      for (const item of initialCertifications) await setDoc(doc(db, 'certifications', item.id), item);
+      for (const item of initialAchievements) await setDoc(doc(db, 'achievements', item.id), item);
+      for (const item of initialReferees) await setDoc(doc(db, 'referees', item.id), item);
+      await setDoc(doc(db, 'documents', initialDocument.id), initialDocument);
+
+      setProfile(initialProfile);
+      setExperience(initialExperience);
+      setEducation(initialEducation);
+      setSkills(initialSkills);
+      setProjects(initialProjects);
+      setCertifications(initialCertifications);
+      setAchievements(initialAchievements);
+      setReferees(initialReferees);
+      setDocuments([initialDocument]);
+
+      markUpdated();
+      showToast('All initial data successfully seeded into Firestore Cloud Database!', 'success');
+      setIsSaving(false);
+      return true;
+    } catch (e: any) {
+      console.error('Error seeding Firestore:', e);
+      showToast(`Firestore Seed Error: ${e.message || 'Permission denied or network error'}`, 'error');
+      setIsSaving(false);
+      return false;
+    }
+  };
+
   const exportDatabaseJSON = (): string => {
     const payload = {
       profile,
@@ -877,6 +958,7 @@ export const CVProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         deleteResumeDocument: deleteDocument,
         resetToDefaults,
         resetToDefaultData: resetToDefaults,
+        seedFirestoreDatabase,
         exportDatabaseJSON,
         exportDataAsJSON: exportDatabaseJSON,
         importDatabaseJSON,

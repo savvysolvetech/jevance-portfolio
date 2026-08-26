@@ -8,6 +8,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   isFirebaseLive: boolean;
+  isSupabaseLive?: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateAdminProfile?: (name: string, email: string) => void;
@@ -146,6 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         isLoading,
         isFirebaseLive: isFirebaseConfigured,
+        isSupabaseLive: isFirebaseConfigured,
         login,
         logout,
         updateAdminProfile

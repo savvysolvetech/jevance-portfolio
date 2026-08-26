@@ -33,7 +33,7 @@ service cloud.firestore {
 }`;
 
 export const AdminSettingsPage: React.FC = () => {
-  const { exportDataAsJSON, importDataFromJSON, resetToDefaultData, showToast } = useCV();
+  const { exportDataAsJSON, importDataFromJSON, resetToDefaultData, seedFirestoreDatabase, showToast } = useCV();
   const { isFirebaseLive, user } = useAuth();
 
   const [copiedRules, setCopiedRules] = useState(false);
@@ -216,6 +216,13 @@ export const AdminSettingsPage: React.FC = () => {
             onChange={e => e.target.files?.[0] && handleImportFile(e.target.files[0])}
             className="hidden"
           />
+          <button
+            onClick={() => seedFirestoreDatabase()}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-500/20 transition-colors"
+          >
+            <Cloud className="w-4 h-4 text-blue-100" />
+            <span>Seed Initial Data to Firestore Cloud</span>
+          </button>
         </div>
       </div>
 
